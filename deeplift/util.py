@@ -439,10 +439,11 @@ def get_integrated_gradients_function(gradient_computation_function,
 
 
 def get_shuffle_seq_ref_function(score_computation_function, 
-                                 shuffle_func, one_hot_func):
+                                 shuffle_func, one_hot_func,
+                                 seed=1):
     def compute_scores_with_shuffle_seq_refs(
         task_idx, input_data_sequences, num_refs_per_seq,
-        batch_size, seed=1, progress_update=None):
+        batch_size, seed=seed, progress_update=None):
 
         import numpy as np
         np.random.seed(seed)
