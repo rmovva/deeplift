@@ -30,7 +30,14 @@ def traverse_edges(s, edges):
         edges_queue_pointers[last_char] += 1
     return "".join(generated)
 
-
-def dinuc_shuffle(s):
-    s = s.upper()
-    return traverse_edges(s, shuffle_edges(prepare_edges(s)))
+def dinuc_shuffle(s, pad_lengths = None):
+    if pad_lengths == None:
+        s = s.upper()
+        return traverse_edges(s, shuffle_edges(prepare_edges(s)))
+    else:
+        s = s.upper()
+        left_pad = pad_lengths[0]
+        right_pad = pad_lengths[1]
+        seq = s[left_pad : len(s) - right_pad]
+        shuffled_seq = transverse_edges(seq, shuffle_edges(prepare_edges(seq)))
+        return s[:left_pad] + shuffled_seq + s[(len(s) - right_pad):]
