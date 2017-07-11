@@ -443,25 +443,39 @@ def get_shuffle_seq_ref_function(score_computation_function,
                                  seed=1):
     def compute_scores_with_shuffle_seq_refs(
         task_idx, input_data_sequences, num_refs_per_seq,
-        batch_size, seed=seed, progress_update=None):
+        batch_size, seed=seed, padded_length=None, pad_lengths = None,
+        pad_char='N', progress_update=None):
 
         import numpy as np
         np.random.seed(seed)
         import random
         random.seed(seed)
+        
+        pad_lengths = list(pad_lengths)
 
         to_run_input_data_seqs = []
         to_run_input_data_refs = []
         references_generated = 0
-        for seq in input_data_sequences:
+        for (j, seq) in enumerate(input_data_sequences):
             for i in range(num_refs_per_seq):
                 references_generated += 1
                 if (progress_update is not None and
                     references_generated%progress_update==0):
                     print(str(references_generated)
                           +" reference seqs generated")
-                to_run_input_data_seqs.append(seq) 
-                to_run_input_data_refs.append(shuffle_func(seq)) 
+                to_run_input_data_seqs.append(seq)
+                if padded_length is None:
+                    to_run_input_data_refs.append(shuffle_func(seq))
+                else:
+                    if pad_lengths == None:
+                        letters = {'A','C','G','T'}
+                        seqStart = next((k for k, base in enumerate(s) if base in letters), None)
+                        left_pad_length = seq[:seqStart].count(pad_char)
+                        right_pad_length = seq[seqStart:].count(pad_char)
+                        seq_pad_length = [left_pad_length, right_pad_length]
+                    else:
+                        seq_pad_length = list(pad_lengths[j])
+                    to_run_input_data_refs.append(shuffle_func(seq, pad_lengths = seq_pad_length))
         if (progress_update is not None):
             print("One hot encoding sequences...")
         input_data_list = [one_hot_func(to_run_input_data_seqs)] 
