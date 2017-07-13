@@ -91,7 +91,7 @@ def plot_weights_given_ax(ax, array,
             else:
                 height_so_far = negative_height_so_far
                 negative_height_so_far += letter[1]
-            plot_func(ax=ax, base=height_so_far, left_edge=i, height=letter[1], color=color)
+            plot_func(ax=ax, base=height_so_far, left_edge=i, height=letter[1], color=color);
         max_pos_height = max(max_pos_height, positive_height_so_far)
         min_neg_height = min(min_neg_height, negative_height_so_far)
         heights_at_positions.append(positive_height_so_far)
@@ -124,7 +124,10 @@ def plot_weights(array,
                  subticks_frequency=1.0,
                  colors=default_colors,
                  plot_funcs=default_plot_funcs,
-                 highlight={}):
+                 highlight={},
+                 show=True,
+                 save=False,
+                 savepath=None):
     fig = plt.figure(figsize=figsize)
     ax = fig.add_subplot(111) 
     plot_weights_given_ax(ax=ax, array=array,
@@ -133,5 +136,11 @@ def plot_weights(array,
         subticks_frequency=subticks_frequency,
         colors=colors,
         plot_funcs=plot_funcs,
-        highlight=highlight)
-    plt.show()
+        highlight=highlight);
+    if save == True:
+        assert savepath != None
+        plt.savefig(savepath);
+    if show == False:
+        plt.close();
+    else:
+        plt.show()
